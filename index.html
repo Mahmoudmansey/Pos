@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نقطة بيع المطعم</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#eaf0ef;--card:#fff;--ink:#10282a;--mut:#5d7274;--pri:#0f766e;--on:#fff;--amb:#b45309;--ok:#15803d;--line:#d3dfde;--bad:#b91c1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1617;--card:#162224;--ink:#e6f0ef;--mut:#8fa6a8;--pri:#2dd4bf;--on:#04201d;--amb:#fbbf24;--ok:#4ade80;--line:#263739;--bad:#f87171}}
+:root[data-theme="dark"]{--bg:#0d1617;--card:#162224;--ink:#e6f0ef;--mut:#8fa6a8;--pri:#2dd4bf;--on:#04201d;--amb:#fbbf24;--ok:#4ade80;--line:#263739;--bad:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,Tahoma,"Segoe UI",sans-serif;font-size:15px;line-height:1.5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+main{max-width:980px;margin:0 auto;padding:12px}
+h1{font-size:20px;font-weight:800;margin:0}
+.top{display:flex;align-items:center;justify-content:space-between;padding:12px 12px 0;max-width:980px;margin:0 auto}
+nav{display:flex;gap:6px;padding:10px 12px 0;max-width:980px;margin:0 auto;overflow-x:auto}
+nav button{flex:1;white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+nav button.on{background:var(--pri);color:var(--on);border-color:var(--pri)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:999px;font:inherit;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip i{font-style:normal;color:var(--amb);font-weight:800;margin-inline-start:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.dish{text-align:start;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px;font:inherit;cursor:pointer;min-height:68px;display:flex;flex-direction:column;justify-content:space-between;direction:ltr}
+.dish b{font-weight:600;font-size:14px}.dish span{color:var(--pri);font-weight:800}
+.dish:active{transform:scale(.98)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}
+.row{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.nm{flex:1;direction:ltr;text-align:start}
+.q{display:flex;align-items:center;gap:6px}
+.q button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:17px;cursor:pointer}
+input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:100%}
+.note{font-size:13px;margin-top:4px}
+.btn{border:0;background:var(--pri);color:var(--on);padding:11px 16px;border-radius:10px;font:inherit;font-weight:800;cursor:pointer}
+.btn.s{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.w{background:var(--amb);color:#fff}.btn.d{background:var(--bad);color:#fff}
+.btns{display:flex;gap:8px;margin-top:10px}.btns .btn{flex:1}
+.tot{display:flex;justify-content:space-between;color:var(--mut)}
+.tot.g{color:var(--ink);font-size:19px;font-weight:800;margin-top:4px}
+.mut{color:var(--mut)}.tag{font-size:12px;color:var(--ok);font-weight:600}
+.k{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.k .box{margin:0}.k .new{border-inline-start:5px solid var(--amb)}.k .ready{border-inline-start:5px solid var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.stats b{display:block;font-size:22px;color:var(--pri)}
+.md{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.md>div{background:var(--card);border-radius:14px;padding:16px;width:100%;max-width:380px;max-height:85vh;overflow:auto}
+label.x{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;direction:ltr}
+label.x.on{border-color:var(--pri);background:var(--bg)}
+.empty{text-align:center;color:var(--mut);padding:24px 0}
+@media print{.top,nav,main{display:none!important}.md{position:static;background:none;padding:0}.md>div{max-width:none}.btns{display:none}}
+select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px}
+.fab{position:fixed;inset-inline-end:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;border:0;background:#2e9e5b;color:#fff;font-size:34px;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;z-index:5}
+.kb{border:0;background:none;color:var(--mut);font-size:22px;cursor:pointer;padding:0 6px}
+.mh{display:flex;align-items:center;gap:10px;padding:4px}.mh button{border:0;background:none;color:var(--ink);font-size:22px;cursor:pointer}.mh b{flex:1;font-size:18px;cursor:pointer}
+.dl{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.dr{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);cursor:pointer;direction:ltr}
+.dr .dn{flex:1}.dp{font-size:26px;color:var(--mut);width:28px;text-align:center}.dq{width:28px;text-align:center;font-weight:800}
+.dr.hl{background:#fdfbd7;color:#1d2433}.dm{border:0;background:none;font-size:20px;cursor:pointer;color:#333}
+.sendbar{position:fixed;left:0;right:0;bottom:0;background:#2e9e5b;color:#fff;text-align:center;font-weight:800;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));cursor:pointer;z-index:6}
+main{padding-bottom:96px}
+</style>
+</head>
+<body>
+<div class="top"><h1 id="ttl">🍽️ نقطة بيع المطعم</h1><span><button data-act="fbopen" style="border:0;background:none;font-size:18px;cursor:pointer">☁</button><span class="mut" id="clock"></span></span></div>
+<nav id="nav"></nav>
+<main id="app"></main>
+<div id="md"></div>
+<script>
+const DEF=`Breakfast Menu
+Continental Breakfast 21
+American Breakfast 22
+Oriental Breakfast 22
+A La Carte Breakfast
+Daily Fresh Squeezed Juices 6
+Selection of Your Favourite Cereal 7
+Assorted Cold Cuts & Cheese Platter 25
+Basket of Oven-Fresh Bakeries 11
+Fluffy Omelet 6
+Scrambled Eggs 6
+Two Farm Fresh Eggs 6
+Freshly Cooked Porridge 6
+Fresh Sliced Seasonal Fruits 10
+Pancakes 7
+Home-Made Waffles 8
+Salad
+Garden Green Salad (V) 7
+Caesar Salad 6
++ Grilled chicken 2
++ Grilled shrimp 4
++ Smoked salmon 8
+Tomato & Mozzarella Salad 7
+Greek Salad 7
+Open-Faced Smoked Salmon 15
+Egyptian and Middle Eastern Mezze 7
+Soup
+Clear Chicken & Vegetable Soup 7
+Classic Tomato Soup with Grilled Shrimp 8
+Chef’s Soup of the Day 8
+Hot Appetizers
+Fried Shrimp 16
+Arayes Kofta 9
+Hot Mezzah 10
+Deep-Fried Calamari 11
+Sandwiches
+Club Sandwich 16
+Classic Burger 13
+The Mangroovy Burger 16
+Tuna Sandwich 16
+Pizza
+Pizza Margherita (V) 14
+Vegetarian Pizza (V) 15
+Pizza Quattro Formaggi 15
+Pizza Al Frutti Di Mare 20
+Pizza Al Salami 15
+Pasta
+Seafood Tagliatelle 20
+Penne Arrabbiata (V) 9
+Spaghetti Bolognese 11
+Al Funghi (V) 11
+Main Courses
+Grilled Beef Tenderloin 32
+Mix Seafood 38
+Grilled Jumbo Shrimps 32
+Mixed Grill 25
+Grilled Boneless Half Chicken 19
+Citrus Chicken 19
+Dessert
+Crème Brûlée 7
+Chocolate & Orange Mousse 7
+Brownies (N) 7
+Apple Tart 7
+Um Ali (N) 7
+Seasonal Fresh Fruit Salad (V) 5
+Fresh Fruit Platter (V) 9
+Mix Nuts (N) 9
+Ice Cream (2 scoops) 4
+Kids Menu
+Molokheya & Rice 5
+Chicken Nuggets with French Fries 5
+Hot Dog Sandwich with French Fries 5
+Fish Fingers with French Fries 5
+Chicken Strips with French Fries 5
+Mac & Cheese (V) 5
+Pasta with Tomato Sauce 5
+Add-Ons
+Grilled Chicken 2
+Cheese 1
+French Fries 2
+Mashed Potatoes 2
+Steamed Rice 1
+Sautéed Vegetables 2
+Soft Drinks
+Still Water - Small 2
+Soda Water 2
+Tonic Water 2
+Coca Cola 2
+Cola Zero 2
+Sprite 2
+Fanta 2
+Birell (Non-Alcoholic Beer) 2
+Juice Orange 2
+Juice Mango 2
+Juice Guava 2
+Juice Apple 2
+Juice Pineapple 2
+Hot Drinks
+Assorted Tea Selections 2
+Nescafé 3
+Decaffeinated Coffee 3
+Espresso 2
+Double Espresso 3
+Cappuccino 3
+Latte Macchiato 3
+Turkish Coffee 3
+Frappe Coffee 3
+Beers & Wine
+Draft Beer (By Glass) 3
+Stella Beer (By Glass) 3
+House Wine White (By Glass) 10
+House Wine Red (By Glass) 10
+House Wine Rosé (By Glass) 10
+Local Spirits
+Whiskey 4cl 3
+Brandy 4cl 3
+Rum 4cl 3
+Vodka 4cl 3
+Gin 4cl 3
+Tequila 4cl 3
+Ouzo 4cl 3
+Extra - Soft Drinks & Coffee
+Still Water - Large 3
+Evian Water - Small 7
+San Pellegrino Water - Small 7
+Red Bull 4
+Fresh Juice Orange 4
+Fresh Juice Strawberry 4
+Fresh Juice Mango 4
+Fresh Juice Lemon 4
+Fresh Juice Guava 4
+Iced Tea (Assorted Flavors) 2
+Extra - Beers
+Stella Beer (Bottle) 6
+Heineken (Bottle) 6
+Sakkara Gold (Bottle or Can) 6
+Extra - Aperitifs
+Martini Bianco 4cl 15
+Martini Rosso 4cl 15
+Martini Dry 4cl 15
+Ricard 4cl 15
+Pernod 4cl 15
+Ouzo (Aperitif) 4cl 15
+Campari 4cl 15
+Extra - Intl Spirits
+Smirnoff Vodka 4cl 15
+Tequila Sierra Gold 4cl 15
+Tequila Sierra Silver 4cl 15
+Gordon’s Gin 4cl 15
+Captain Morgan Rum 4cl 15
+Bacardi Gold Rum 4cl 15
+Bacardi White Rum 4cl 15
+Absolut Vodka 4cl 15
+Beefeater Gin 4cl 15
+Havana Club Rum 4cl 15
+Mocktails
+Virgin Mojito 5
+Florida 5
+Virgin Colada 5
+Sunshine 4
+Tropicana 5
+Lemon Cooler 5
+Shirley Temple 4
+Pineapple Mint Smoothie 5
+Cocktails (All Inclusive)
+Mai Tai 10
+Planters Punch 10
+Caipiroska 10
+Spritzer 8
+Mojito 10
+Long Island Iced Tea 15
+Hilton Fever 10
+Piña Colada 12
+Blue Lagoon 10
+Extra - Cocktails
+Classic Martini 15
+Daiquiri 15
+Manhattan 15
+Mai Tai (Premium) 15
+Planters Punch (Premium) 15
+Caipiroska (Premium) 15
+Margarita 15
+Tequila Sunrise 15
+Bloody Mary 15
+Whiskey Sour 15
+Brandy Sour 15
+Extra - Liqueur
+Tia Maria 2cl 20
+Grappa 2cl 20
+Cointreau 2cl 20
+Grand Marnier 2cl 20
+Baileys Irish Cream 2cl 20
+Drambuie 2cl 20
+Triple Sec 2cl 20
+Extra - Whiskey
+Johnnie Walker Red Label 4cl 20
+Jack Daniels 4cl 20
+Johnnie Walker Black Label 4cl 28
+Chivas Regal 4cl 28
+Dimple 4cl 25
+Extra - Cognac & Brandy
+Courvoisier VS 2cl 25
+Courvoisier VSOP 2cl 30
+Hennessy VS 2cl 25
+Hennessy VSOP 2cl 30
+Remy Martin VS 2cl 25
+Remy Martin VSOP 2cl 30
+Brandy VS 2cl 20
+Brandy VSOP 2cl 30
+Extra - Sparkling Wine
+Valmont White 75cl 60
+Valmont Rosé 75cl 60
+Aria White 75cl 55
+Aria Rosé 75cl 55
+Le Baron White 75cl 75
+Le Baron Rosé 75cl 75
+Extra - Wine
+Obelisk Red 75cl 40
+Obelisk White 75cl 40
+Obelisk Rosé 75cl 40
+Omar Khayyam Red 75cl 40
+Omar Khayyam White 75cl 40
+Omar Khayyam Rosé 75cl 40
+Chardonnay Cape Bay White 75cl 60
+Merlot Cape Bay Red 75cl 60
+Chateau Grand Marquis Red 75cl 40
+Chateau Grand Marquis White 75cl 40
+NALA Red South African Grapes 75cl 50
+NALA White South African Grapes 75cl 50
+Corkage Fee (Per Bottle) 20`;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $$=n=>(S.set.cur??'$')+(+(+n).toFixed(2));
+let S={tables:{},orders:[],sales:[],pays:{},meta:{},menuText:DEF,set:{service:0,tax:0},staff:'Admin:1234:admin\nCashier:0000:cashier',seq:1,ver:2};
+try{const r=localStorage.getItem('pos-v1');if(r){const o=JSON.parse(r);if(o.ver!=2)delete o.menuText;S=Object.assign(S,o,{ver:2})}}catch(e){}
+let DB=null,lastL='',lastC='',tm;
+const live=()=>JSON.stringify({tables:S.tables,orders:S.orders.filter(o=>o.status!='served').slice(-60),pays:S.pays,meta:S.meta,seq:S.seq});
+const conf=()=>JSON.stringify({menuText:S.menuText,set:S.set,staff:S.staff});
+function save(){try{localStorage.setItem('pos-v1',JSON.stringify(S))}catch(e){}if(!DB)return;clearTimeout(tm);tm=setTimeout(()=>{const l=live(),c=conf();if(l!=lastL){lastL=l;DB.doc('pos/live').set({j:l}).catch(()=>{})}if(c!=lastC){lastC=c;DB.doc('pos/config').set({j:c}).catch(()=>{})}},250)}
+let ui={tab:'order',table:'',cat:0,view:'home',ocat:1,md:null,rst:false};
+const TBL=()=>[...Array(+S.set.tables||12)].map((_,i)=>String(i+1)).concat('سفري');
+const NUM=/^(.*?)\s+(\d+(?:\.\d+)?)$/;
+function parse(t){const cats=[];let c,d;t.split('\n').forEach(l=>{l=l.trim();if(!l)return;if(l[0]=='+'){const x=l.slice(1).trim().match(NUM);if(d&&x)d.extras.push({name:x[1],price:+x[2]});return}const m=l.match(NUM);if(m){if(!c){c={name:'عام',dishes:[]};cats.push(c)}d={name:m[1],price:+m[2],extras:[]};c.dishes.push(d)}else{c={name:l,dishes:[]};cats.push(c);d=null}});return cats}
+let MENU=parse(S.menuText);
+const cart=()=>S.tables[ui.table]||[];
+const lab=id=>{const m=S.meta[id];return m?(m.label||'Order '+new Date(m.time).toTimeString().slice(0,5)):'طاولة '+id};
+const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);return m<1?'منذ أقل من دقيقة':m<60?'منذ '+m+' دقيقة':'منذ '+Math.floor(m/60)+' ساعة'};
+const qtyOf=n=>cart().filter(i=>i.name==n||i.name.startsWith(n+' + ')).reduce((a,i)=>a+i.qty,0);
+const sum=items=>{const sub=items.reduce((a,i)=>a+i.price*i.qty,0),sv=sub*S.set.service/100,tx=(sub+sv)*S.set.tax/100;return{sub,sv,tx,tot:sub+sv+tx}};
+function add(d,ex){const name=d.name+ex.map(e=>' + '+e.name).join('');const price=d.price+ex.reduce((a,e)=>a+e.price,0);const l=cart();const f=l.find(i=>i.name==name&&!i.sent&&!i.note);if(f)f.qty++;else l.push({name,price,qty:1,note:'',sent:false});save();render()}
+function render(){
+$('#ttl').textContent='🍽️ '+(S.set.name||'نقطة بيع المطعم');if(!ui.user&&!staffList().length)ui.user={name:'',role:'admin'};
+if(!ui.user){$('#nav').innerHTML='';$('#app').innerHTML=vLogin();$('#md').innerHTML='';return}
+const adm=ui.user.role=='admin';if(!adm&&(ui.tab=='reports'||ui.tab=='settings'))ui.tab='order';
+const nk=S.orders.filter(o=>o.status=='new').length;
+$('#nav').innerHTML=[['order','الطلبات'],['kitchen','المطبخ'+(nk?' ('+nk+')':'')],...(adm?[['reports','التقارير'],['settings','الإعدادات']]:[])].map(t=>`<button data-act="tab" data-v="${t[0]}" class="${ui.tab==t[0]?'on':''}">${t[1]}</button>`).join('')+'<button data-act="logout" style="flex:none">خروج</button>';
+$('#app').innerHTML={order:vOrder,kitchen:vKitchen,reports:vReports,settings:vSettings}[ui.tab]();
+const mv=ui.tab=='order'&&ui.view=='menu';document.querySelector('.top').style.display=$('#nav').style.display=mv?'none':'';
+$('#md').innerHTML=ui.md?vModal():'';}
+function vOrder(){return ui.view=='menu'?vMenu():vHome()}
+function vHome(){const ids=Object.keys(S.tables).filter(id=>S.tables[id].length&&!(S.meta[id]||{}).hide).sort((a,b)=>((S.meta[a]||{}).time||0)-((S.meta[b]||{}).time||0));
+const cards=ids.map(id=>{const l=S.tables[id],m=S.meta[id]||{},t=sum(m.void?[]:l),sd=m.void?'text-decoration:line-through;opacity:.6;':'';return`<div class="box" style="margin:0"><div style="display:flex;align-items:center"><b data-act="open" data-v="${id}" style="flex:1;font-size:18px;cursor:pointer;${sd}">${esc(lab(id))}</b><button class="kb" data-act="omenu" data-v="${id}">⋮</button></div><div class="mut note">${ago(m.time||Date.now())}</div><div data-act="open" data-v="${id}" style="cursor:pointer;direction:ltr;margin:6px 0;${sd}">${l.map(i=>`<div>${i.qty} ${esc(i.name)}${i.sent?'':' <span class="tag" style="color:var(--amb)">●</span>'}</div>`).join('')}</div><div class="tot"><span>${esc(m.user||'')}</span><b style="color:var(--ink)">${$$(t.tot)}</b></div>${m.void?'':`<div class="btns"><button class="btn s" data-act="pay" data-v="${id}">الدفع</button></div>`}</div>`}).join('');
+return`<div class="k">${cards||'<div class="empty" style="grid-column:1/-1">لا توجد طلبات حالياً. اضغط + لبدء طلب جديد</div>'}</div><button class="fab" data-act="new">+</button>`}
+function dishRows(){const q=(ui.q||'').toLowerCase(),ds=[];MENU.forEach((c,ci)=>{if(q||ci==ui.ocat-1)c.dishes.forEach((d,di)=>{if(!q||d.name.toLowerCase().includes(q))ds.push([ci,di,d])})});
+return ds.map(x=>{const d=x[2],n=qtyOf(d.name);return n?`<div class="dr hl"><span class="dq">${n}</span><span class="dn" data-act="dish" data-c="${x[0]}" data-v="${x[1]}">${esc(d.name)}</span><button class="dm" data-act="dopt" data-v="${esc(d.name)}">•••</button></div>`:`<div class="dr" data-act="dish" data-c="${x[0]}" data-v="${x[1]}"><span class="dp">+</span><span class="dn">${esc(d.name)}</span><span class="mut">${$$(d.price)}</span></div>`}).join('')||'<div class="empty">لا توجد أصناف</div>'}
+function vMenu(){const id=ui.table,l=cart(),t=sum(l),un=l.filter(i=>!i.sent).length;let body;
+if(ui.ocat==0&&!ui.q){body=l.length?`<div class="box" style="margin-top:0">${l.map((i,k)=>`<div class="row"><div class="nm"><div>${esc(i.name)} ${i.sent?'<span class="tag">✓ في المطبخ</span>':''}</div>${i.sent?(i.note?`<div class="mut note">${esc(i.note)}</div>`:''):`<input class="note" data-act="note" data-k="${k}" placeholder="ملاحظة" value="${esc(i.note)}">`}</div><div class="q">${i.sent?'':`<button data-act="dec" data-k="${k}">−</button>`}<b>${i.qty}</b>${i.sent?'':`<button data-act="inc" data-k="${k}">+</button>`}</div><b style="min-width:52px;text-align:end">${$$(i.price*i.qty)}</b></div>`).join('')}${S.set.service?`<div class="tot"><span>خدمة ${S.set.service}%</span><span>${$$(t.sv)}</span></div>`:''}${S.set.tax?`<div class="tot"><span>ضريبة ${S.set.tax}%</span><span>${$$(t.tx)}</span></div>`:''}<div class="tot g"><span>الإجمالي</span><span>${$$(t.tot)}</span></div></div>`:'<div class="empty">لم تضف أصنافاً بعد</div>'}
+else body=`<div class="dl">${dishRows()}</div>`;
+return`<div class="mh"><button data-act="mclose">✕</button><b data-act="omenu" data-v="${id}">${esc(lab(id))}</b><button data-act="msearch">🔍</button></div>${ui.sq?`<input id="qs" placeholder="بحث عن صنف" value="${esc(ui.q||'')}" style="margin-bottom:8px">`:''}
+<div class="chips"><button class="chip ${ui.ocat==0&&!ui.q?'on':''}" data-act="ocat" data-v="0">الإجمالي${l.length?' '+$$(t.tot):''}</button>${MENU.map((c,i)=>`<button class="chip ${i==ui.ocat-1&&!ui.q?'on':''}" data-act="ocat" data-v="${i+1}">${esc(c.name)}</button>`).join('')}</div>${body}<div class="sendbar" data-act="send">✈ إرسال${un?' ('+un+')':''}</div>`}
+function vKitchen(){
+const o=S.orders.filter(o=>o.status!='served').sort((a,b)=>a.time-b.time);
+if(!o.length)return'<div class="empty">لا توجد طلبات حالياً في المطبخ</div>';
+return'<div class="k">'+o.map(x=>`<div class="box ${x.status}"><div class="row" style="padding-top:0"><b>${esc(x.table)} #${x.id}</b><span class="mut">${new Date(x.time).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})}</span></div>${x.items.map(i=>`<div class="row" style="direction:ltr"><span>${i.qty} × ${esc(i.name)}${i.note?`<div class="mut note">${esc(i.note)}</div>`:''}</span></div>`).join('')}<div class="btns"><button class="btn ${x.status=='new'?'w':''}" data-act="adv" data-v="${x.id}">${x.status=='new'?'جاهز':'تم التقديم'}</button></div></div>`).join('')+'</div>'}
+function vReports(){
+const dn={d:1,w:7,m:30}[ui.per||'d'],st=new Date();st.setHours(0,0,0,0);st.setDate(st.getDate()-dn+1);const sl=S.sales.filter(s=>s.time>=st.getTime()),bd={};
+const tot=sl.reduce((a,s)=>a+s.total,0),m={cash:0,card:0,room:0},rms={},p={};
+sl.forEach(s=>{(s.pays||[{method:s.method,amount:s.total}]).forEach(x=>{m[x.method]=(m[x.method]||0)+x.amount;if(x.room)rms[x.room]=(rms[x.room]||0)+x.amount});const k=new Date(s.time).toLocaleDateString('en-GB');bd[k]=(bd[k]||0)+s.total;s.items.forEach(i=>p[i.name]=(p[i.name]||0)+i.qty)});
+const top=Object.entries(p).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const csv='time,table,method,total,items\n'+S.sales.map(s=>[new Date(s.time).toISOString(),s.table,(s.pays||[{method:s.method}]).map(x=>x.method).join('+'),s.total.toFixed(2),'"'+s.items.map(i=>i.qty+'x '+i.name).join('; ').replace(/"/g,'""')+'"'].join(',')).join('\n');
+return`<div class="chips">${[['d','اليوم'],['w','7 أيام'],['m','30 يوم']].map(x=>`<button class="chip ${(ui.per||'d')==x[0]?'on':''}" data-act="per" data-v="${x[0]}">${x[1]}</button>`).join('')}</div><div class="stats"><div><b>${$$(tot)}</b>الإيراد</div><div><b>${sl.length}</b>عدد الفواتير</div><div><b>${$$(sl.length?tot/sl.length:0)}</b>متوسط الفاتورة</div></div>
+<div class="box"><b>طرق الدفع</b><div class="row"><span>كاش</span><b>${$$(m.cash)}</b></div><div class="row"><span>كارت</span><b>${$$(m.card)}</b></div><div class="row"><span>على الغرفة</span><b>${$$(m.room)}</b></div></div>
+${dn>1?`<div class="box"><b>الإيراد اليومي</b>${Object.entries(bd).map(x=>`<div class="row"><span>${x[0]}</span><b>${$$(x[1])}</b></div>`).join('')||'<div class="empty">لا توجد مبيعات</div>'}</div>`:''}${Object.keys(rms).length?`<div class="box"><b>حسابات الغرف</b>${Object.entries(rms).map(x=>`<div class="row"><span>غرفة ${esc(x[0])}</span><b>${$$(x[1])}</b></div>`).join('')}</div>`:''}<div class="box"><b>الأصناف الأكثر مبيعاً</b>${top.length?top.map(t=>`<div class="row"><span style="direction:ltr">${esc(t[0])}</span><b>${t[1]}</b></div>`).join(''):'<div class="empty">لا توجد مبيعات اليوم بعد</div>'}</div>
+<div class="box"><b>الفواتير (${sl.length})</b>${sl.slice().sort((a,b)=>b.time-a.time).slice(0,100).map(s=>`<div class="row" data-act="inv" data-v="${s.id}" style="cursor:pointer"><div><div>${esc(s.table)}${s.room?' · غرفة '+esc(s.room):''}</div><div class="mut note">${new Date(s.time).toLocaleString('en-GB')}</div></div><b>${$$(s.total)}</b></div>`).join('')||'<div class="empty">لا توجد فواتير في هذه الفترة</div>'}</div>
+<div class="box"><b>تصدير كل المبيعات (CSV)</b><p class="mut" style="margin:4px 0 8px">انسخ النص والصقه في ملف .csv أو في Excel</p><textarea rows="5" readonly style="direction:ltr" onclick="this.select()">${esc(csv)}</textarea></div>`}
+function vSettings(){
+const sub=ui.st||'gen',tabs=[['gen','عام'],['menu','القائمة'],['staff','الموظفون'],['data','البيانات']].map(x=>`<button class="chip ${sub==x[0]?'on':''}" data-act="sub" data-v="${x[0]}">${x[1]}</button>`).join('');let b='';
+if(sub=='gen'){const f=(l,k,t)=>`<div style="margin-top:8px">${l}<input type="${t}" data-act="gen" data-f="${k}" value="${esc(S.set[k]??({cur:'$',tables:12}[k]??''))}"></div>`;
+b=`<div class="box"><b>إعدادات عامة</b>${f('اسم المطعم (العنوان والفاتورة)','name','text')}${f('رمز العملة','cur','text')}${f('عدد الطاولات','tables','number')}${f('نسبة الخدمة %','service','number')}${f('نسبة الضريبة %','tax','number')}${f('نص أسفل الفاتورة','foot','text')}</div>`}
+else if(sub=='menu'){const ec=Math.max(0,Math.min(ui.ec||0,MENU.length-1)),c=MENU[ec];
+b=`<div class="chips">${MENU.map((x,i)=>`<button class="chip ${i==ec?'on':''}" data-act="ecat" data-v="${i}">${esc(x.name)}</button>`).join('')}</div>${c?`<div class="box"><div style="display:flex;gap:6px"><input data-act="mn" data-k="cn" data-c="${ec}" value="${esc(c.name)}"><button class="btn d" data-act="delc" data-c="${ec}" style="flex:none">حذف القسم</button></div>${c.dishes.map((d,i)=>`<div class="row" style="direction:ltr"><input data-act="mn" data-k="dn" data-c="${ec}" data-d="${i}" value="${esc(d.name)}"><input type="number" step="0.5" style="width:80px" data-act="mn" data-k="dp" data-c="${ec}" data-d="${i}" value="${d.price}"><button class="btn d" style="padding:6px 10px" data-act="deld" data-c="${ec}" data-d="${i}">✕</button></div>`).join('')}<div class="btns"><button class="btn" data-act="addd" data-c="${ec}">+ صنف جديد</button></div></div>`:''}<div class="box"><b>قسم جديد</b><div style="display:flex;gap:6px;margin-top:6px"><input id="nc" placeholder="اسم القسم"><button class="btn" data-act="addc" style="flex:none">إضافة</button></div></div>`}
+else if(sub=='staff'){b=`<div class="box"><b>الموظفون</b><p class="mut" style="margin:4px 0">admin = كل الصلاحيات، cashier = الطلبات والمطبخ فقط</p>${stArr().map((a,i)=>`<div class="row"><input data-act="st" data-i="${i}" data-f="0" value="${esc(a[0])}" placeholder="الاسم"><input data-act="st" data-i="${i}" data-f="1" value="${esc(a[1])}" placeholder="PIN" inputmode="numeric" style="width:90px"><select data-act="st" data-i="${i}" data-f="2"><option value="admin" ${a[2]=='admin'?'selected':''}>admin</option><option value="cashier" ${a[2]!='admin'?'selected':''}>cashier</option></select><button class="btn d" style="padding:6px 10px" data-act="delst" data-i="${i}">✕</button></div>`).join('')}<div class="btns"><button class="btn" data-act="addst">+ موظف</button></div></div>`}
+else{b=`<div class="box"><b>استيراد القائمة من نص</b><p class="mut" style="margin:4px 0 8px">سطر ينتهي برقم = صنف، + = إضافة للصنف السابق، بدون رقم = قسم.</p><textarea id="mt" rows="8" style="direction:ltr">${esc(S.menuText)}</textarea><div class="btns"><button class="btn" data-act="menu">تطبيق القائمة</button><button class="btn s" data-act="defmenu">القائمة الافتراضية</button></div></div><div class="box"><b>نسخة احتياطية</b><textarea id="bk" rows="4" style="direction:ltr">${esc(JSON.stringify({menuText:S.menuText,set:S.set,staff:S.staff}))}</textarea><div class="btns"><button class="btn" data-act="restore">استعادة من النص</button></div></div><div class="box"><b>مسح البيانات</b><p class="mut" style="margin:4px 0 8px">يمسح الطلبات الحالية فقط. المبيعات المسجلة تبقى.</p><button class="btn d" data-act="reset">${ui.rst?'اضغط مرة أخرى للتأكيد':'مسح الطلبات الحالية'}</button></div>`}
+return`<div class="chips">${tabs}</div>${b}`}
+function vModal(){const m=ui.md;
+if(m.t=='rc'){const s=m.s;return`<div class="md"><div id="rc" style="direction:ltr"><b>${esc(S.set.name||'Receipt')} #${s.id%100000}</b><div class="mut">${new Date(s.time).toLocaleString('en-GB')} · ${esc(s.table)}${s.room?' · Room '+esc(s.room):''}</div>${s.items.map(i=>`<div class="row"><span>${i.qty} × ${esc(i.name)}</span><span>${$$(i.price*i.qty)}</span></div>`).join('')}<div class="tot g"><span>Total</span><span>${$$(s.total)}</span></div>${(s.pays||[{method:s.method,amount:s.total}]).map(x=>`<div class="tot"><span>${x.method=='room'?'Room '+esc(x.room||''):x.method}</span><span>${$$(x.amount)}</span></div>`).join('')}<div class="mut">${esc(S.set.foot||'')}</div><div id="pm" class="mut note" style="text-align:center"></div><div class="btns"><button class="btn" data-act="pdf">حفظ PDF</button><button class="btn s" data-act="prt">طباعة</button><button class="btn s" data-act="close">إغلاق</button></div></div></div>`}
+if(m.t=='it'){const l=cart();return`<div class="md"><div><b style="direction:ltr;display:block">${esc(m.n)}</b>${l.map((i,k)=>(i.name==m.n||i.name.startsWith(m.n+' + '))?`<div class="row"><div class="nm"><div>${esc(i.name)} ${i.sent?'<span class="tag">✓</span>':''}</div>${i.sent?'':`<input class="note" data-act="note" data-k="${k}" placeholder="ملاحظة" value="${esc(i.note)}">`}</div><div class="q">${i.sent?'':`<button data-act="dec" data-k="${k}">−</button>`}<b>${i.qty}</b>${i.sent?'':`<button data-act="inc" data-k="${k}">+</button>`}</div></div>`:'').join('')}<div class="btns"><button class="btn" data-act="close">تم</button></div></div></div>`}
+if(m.t=='fb'){return`<div class="md"><div><b>المزامنة بين الأجهزة (Firebase)</b><p class="mut" style="margin:6px 0">${DB?'متصل ✓':'غير متصل: وضع الجهاز الواحد'}</p><textarea id="fbc" rows="7" style="direction:ltr" placeholder="الصق هنا firebaseConfig من Firebase">${esc(localStorage.getItem('fbcfg')||'')}</textarea><div class="btns"><button class="btn" data-act="fbsave">حفظ وإعادة تحميل</button><button class="btn s" data-act="fbclr">فصل</button></div><div class="btns"><button class="btn s" data-act="close">إغلاق</button></div></div></div>`}
+if(m.t=='om'){const mm=S.meta[m.id]||{};return`<div class="md"><div style="padding:0;overflow:hidden"><div style="background:var(--pri);color:var(--on);padding:14px;text-align:center;font-weight:800">${esc(lab(m.id))}</div>${(mm.void?[['ohide','إخفاء']]:[['ocancel',ui.cf?'تأكيد الإلغاء':'إلغاء الطلب'],['ohide','إخفاء'],['ptot','طباعة الإجمالي'],['opay','الدفع'],['rename','تسمية الطلب']]).map(x=>`<button class="btn s" style="width:100%;border-radius:0;border-width:0 0 1px;padding:14px" data-act="${x[0]}">${x[1]}</button>`).join('')}<button class="btn s" style="width:100%;border:0;padding:14px" data-act="close">إغلاق</button></div></div>`}
+if(m.t=='lb'){return`<div class="md"><div><b>تسمية الطلب</b><input id="lb" value="${esc((S.meta[m.id]||{}).label||'')}" placeholder="طاولة 5 / سفري / غرفة 214" style="margin:8px 0"><div class="chips">${['طاولة ','سفري','غرفة '].map(x=>`<button class="chip" data-act="lpre" data-v="${x}">${x.trim()}</button>`).join('')}</div><div class="btns"><button class="btn" data-act="lbsave">حفظ</button><button class="btn d" data-act="odel">${ui.cf?'تأكيد الحذف':'حذف الطلب'}</button></div><div class="btns"><button class="btn s" data-act="close">إغلاق</button></div></div></div>`}
+if(m.t=='ex'){return`<div class="md"><div><b style="direction:ltr;display:block">${esc(m.d.name)}</b>${m.d.extras.map((e,i)=>`<label class="x ${m.s.includes(i)?'on':''}" data-act="xt" data-v="${i}"><span>${esc(e.name)}</span><b>+${$$(e.price)}</b></label>`).join('')}<div class="btns"><button class="btn" data-act="exok">إضافة للطلب</button><button class="btn s" data-act="close">إلغاء</button></div></div></div>`}
+const t=sum(cart()),pd=(S.pays[ui.table]||[]).reduce((a,x)=>a+x.amount,0),rem=Math.max(0,t.tot-pd),n=ui.n||1,sh=n>1?Math.round(rem/n*100)/100:rem;return`<div class="md"><div><b>الدفع - ${esc(lab(ui.table))}</b><div class="tot"><span>الإجمالي</span><span>${$$(t.tot)}</span></div>${pd?`<div class="tot"><span>مدفوع</span><span>${$$(pd)}</span></div>`:''}<div class="tot g"><span>المتبقي</span><span>${$$(rem)}</span></div><div class="row"><span>تقسيم على</span><div class="q"><button data-act="nd">−</button><b>${n}</b><button data-act="nu">+</button></div></div><div class="tot g"><span>المبلغ الآن</span><span>${$$(sh)}</span></div><div class="btns"><button class="btn" data-act="paid" data-v="cash">كاش</button><button class="btn" data-act="paid" data-v="card">كارت</button></div><div style="margin-top:10px"><span class="mut">تحميل على حساب الغرفة</span><input id="rm" placeholder="رقم الغرفة" value="${esc((lab(ui.table).match(/(?:غرفة|room)\s*(\S+)/i)||[])[1]||'')}"></div>${ui.rerr?'<p style="color:var(--bad);margin:4px 0">اكتب رقم الغرفة</p>':''}<div class="btns"><button class="btn w" data-act="paid" data-v="room">على الغرفة</button></div><div class="btns"><button class="btn s" data-act="close">رجوع</button></div></div></div>`}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el||/INPUT|SELECT/.test(el.tagName))return;const a=el.dataset.act,v=el.dataset.v,k=+el.dataset.k,l=cart();
+if(a=='tab'){ui.tab=v;ui.rst=false}
+else if(a=='table'){ui.table=v}
+else if(a=='cat'){ui.cat=+v}
+else if(a=='dish'){const d=MENU[+el.dataset.c].dishes[+v];if(d.extras.length){ui.md={t:'ex',d,s:[]}}else{add(d,[]);return}}
+else if(a=='xt'){const i=+v,s=ui.md.s;s.includes(i)?s.splice(s.indexOf(i),1):s.push(i)}
+else if(a=='exok'){const m=ui.md;ui.md=null;add(m.d,m.s.sort().map(i=>m.d.extras[i]));return}
+else if(a=='close'){ui.md=null;ui.cf=0}
+else if(a=='inc'){l[k].qty++;save()}
+else if(a=='dec'){l[k].qty--;if(l[k].qty<1)l.splice(k,1);save()}
+else if(a=='send'){const n=l.filter(i=>!i.sent);if(n.length){S.orders.push({id:S.seq++,oid:ui.table,table:lab(ui.table),time:Date.now(),status:'new',items:n.map(i=>({name:i.name,qty:i.qty,note:i.note}))});n.forEach(i=>i.sent=true)}ui.view='home';save()}
+else if(a=='new'){const id='o'+Date.now();S.tables[id]=[];S.meta[id]={time:Date.now(),user:ui.user.name,label:''};ui.table=id;ui.view='menu';ui.ocat=1;ui.q='';ui.sq=0;save()}
+else if(a=='open'){if(!(S.meta[v]||{}).void){ui.table=v;ui.view='menu';ui.ocat=1;ui.q='';ui.sq=0}}
+else if(a=='mclose'){if(!l.length){delete S.tables[ui.table];delete S.meta[ui.table]}ui.view='home';save()}
+else if(a=='ocat'){ui.ocat=+v;ui.q=''}
+else if(a=='msearch'){ui.sq=!ui.sq;if(!ui.sq)ui.q=''}
+else if(a=='dopt'){ui.md={t:'it',n:v}}
+else if(a=='omenu'){ui.md={t:'om',id:v};ui.cf=0}
+else if(a=='fbopen'){ui.md={t:'fb'}}
+else if(a=='fbsave'){try{const t=$('#fbc').value,o=new Function('return '+t.slice(t.indexOf('{'),t.lastIndexOf('}')+1))();if(!o.projectId)throw 0;localStorage.setItem('fbcfg',JSON.stringify(o));location.reload();return}catch(x){alert('الإعدادات غير صحيحة')}}
+else if(a=='fbclr'){localStorage.removeItem('fbcfg');location.reload();return}
+else if(a=='rename'){ui.md={t:'lb',id:ui.md.id}}
+else if(a=='ocancel'){if(!ui.cf){ui.cf=1}else{const id=ui.md.id;if(!S.tables[id].length){delete S.tables[id];delete S.meta[id]}else{S.meta[id].void=1;S.orders.forEach(o=>{if(o.oid==id&&o.status!='served')o.status='served'});delete S.pays[id]}ui.md=null;ui.cf=0;save()}}
+else if(a=='ohide'){S.meta[ui.md.id].hide=1;ui.md=null;save()}
+else if(a=='ptot'){const id=ui.md.id,l2=S.tables[id]||[],t2=sum(l2);ui.md={t:'rc',s:{id:Date.now(),time:Date.now(),table:lab(id),total:t2.tot,pays:[],items:l2.map(i=>({name:i.name,qty:i.qty,price:i.price}))}}}
+else if(a=='opay'){ui.table=ui.md.id;ui.n=1;ui.rerr=0;ui.md={t:'pay'}}
+else if(a=='lpre'){$('#lb').value=v;$('#lb').focus();return}
+else if(a=='lbsave'){S.meta[ui.md.id].label=$('#lb').value.trim();ui.md=null;save()}
+else if(a=='odel'){if(ui.cf){const id=ui.md.id;delete S.tables[id];delete S.pays[id];delete S.meta[id];ui.md=null;ui.cf=0;if(ui.table==id)ui.view='home';save()}else ui.cf=1}
+else if(a=='pay'){if(v)ui.table=v;ui.n=1;ui.rerr=0;ui.md={t:'pay'}}
+else if(a=='paid'){let room='';if(v=='room'){room=($('#rm').value||'').trim();if(!room){ui.rerr=1;render();return}}const t=sum(l),ps=S.pays[ui.table]||(S.pays[ui.table]=[]),rem=t.tot-ps.reduce((x,y)=>x+y.amount,0),n=ui.n||1;ps.push(Object.assign({method:v,amount:n>1?Math.round(rem/n*100)/100:rem},room?{room}:{}));ui.n=Math.max(1,n-1);if(t.tot-ps.reduce((x,y)=>x+y.amount,0)<0.01){const rm=(ps.find(x=>x.room)||{}).room,sale={id:Date.now(),time:Date.now(),table:lab(ui.table),room:rm,total:t.tot,pays:ps,items:l.map(i=>({name:i.name,qty:i.qty,price:i.price}))};S.sales.push(sale);if(DB)DB.collection('sales').add({time:sale.time,j:JSON.stringify(sale)}).catch(()=>{});delete S.tables[ui.table];delete S.meta[ui.table];delete S.pays[ui.table];ui.md={t:'rc',s:sale};ui.n=1;ui.view='home'}save()}
+else if(a=='adv'){const o=S.orders.find(x=>x.id==+v);o.status=o.status=='new'?'ready':'served';save()}
+else if(a=='menu'){const t=$('#mt').value;const p=parse(t);if(p.length){S.menuText=t;MENU=p;ui.cat=0;save()}}
+else if(a=='defmenu'){S.menuText=DEF;MENU=parse(DEF);ui.cat=0;save()}
+else if(a=='setsave'){S.set={service:Math.max(0,+$('#sv').value||0),tax:Math.max(0,+$('#tx').value||0)};save()}
+else if(a=='reset'){if(ui.rst){S.tables={};S.meta={};S.orders=[];S.pays={};if(!DB)S.sales=[];save();ui.rst=false}else{ui.rst=true}}
+else if(a=='nu'){ui.n=(ui.n||1)+1}
+else if(a=='nd'){ui.n=Math.max(1,(ui.n||1)-1)}
+else if(a=='per'){ui.per=v}
+else if(a=='inv'){const s=S.sales.find(x=>x.id==+v);if(s)ui.md={t:'rc',s}}
+else if(a=='login'){const u=staffList().find(x=>x.pin==$('#pin').value.trim());if(u){ui.user=u;ui.err=0}else ui.err=1}
+else if(a=='logout'){ui.user=null;ui.tab='order'}
+else if(a=='staffsave'){S.staff=$('#stf').value;save()}
+else if(a=='prt'){try{window.print()}catch(x){}return}
+else if(a=='pdf'){savePDF(ui.md.s);return}
+else if(a=='sub'){ui.st=v}
+else if(a=='ecat'){ui.ec=+v}
+else if(a=='delc'){MENU.splice(+el.dataset.c,1);ui.ec=0;S.menuText=toText(MENU);save()}
+else if(a=='deld'){MENU[+el.dataset.c].dishes.splice(+el.dataset.d,1);S.menuText=toText(MENU);save()}
+else if(a=='addd'){MENU[+el.dataset.c].dishes.push({name:'New Item',price:0,extras:[]});S.menuText=toText(MENU);save()}
+else if(a=='addc'){const n=$('#nc').value.trim().replace(/\s*\d+$/,'');if(n){MENU.push({name:n,dishes:[]});ui.ec=MENU.length-1;S.menuText=toText(MENU);save()}}
+else if(a=='addst'){S.staff=(S.staff?S.staff+'\n':'')+'New:0000:cashier';save()}
+else if(a=='delst'){const s=stArr();s.splice(+el.dataset.i,1);S.staff=s.map(x=>x.join(':')).join('\n');save()}
+else if(a=='restore'){try{const o=JSON.parse($('#bk').value);if(o.menuText){S.menuText=o.menuText;MENU=parse(S.menuText)}if(o.set)S.set=o.set;if(o.staff!=null)S.staff=o.staff;save()}catch(x){}}
+render()});
+document.addEventListener('change',e=>{if(e.target.dataset.act=='note'){cart()[+e.target.dataset.k].note=e.target.value;save()}});
+setInterval(()=>{$('#clock').textContent=new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})},1000);
+function rcCanvas(s){const W=420,P=24,ops=[],ar=/[\u0600-\u06FF]/,F='Cairo,Tahoma,Arial,sans-serif',pays=s.pays||[{method:s.method,amount:s.total}];
+ops.push(['c',S.set.name||'Receipt',22,1],['c','#'+(s.id%100000)+'  '+new Date(s.time).toLocaleString('en-GB'),13,0],['c',s.table+(s.room?' · Room '+s.room:''),16,1],['h']);
+s.items.forEach(i=>ops.push(['lr',i.qty+' × '+i.name,$$(i.price*i.qty),15,0]));
+ops.push(['h'],['lr','Total',$$(s.total),20,1]);
+pays.forEach(x=>ops.push(['lr',x.method=='room'?'Room '+(x.room||''):x.method,$$(x.amount),14,0]));
+if(S.set.foot)ops.push(['h'],['c',S.set.foot,13,0]);
+const LH=o=>o[0]=='h'?16:Math.round((o[0]=='lr'?o[3]:o[2])*1.6),H=P*2+ops.reduce((a,o)=>a+LH(o),0),c=document.createElement('canvas');
+c.width=W*2;c.height=H*2;const x=c.getContext('2d');x.scale(2,2);x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#111';x.textBaseline='middle';let y=P;
+ops.forEach(o=>{const h=LH(o),m=y+h/2;y+=h;
+if(o[0]=='h'){x.fillRect(P,m,W-2*P,1)}
+else if(o[0]=='c'){x.font=(o[3]?'700 ':'400 ')+o[2]+'px '+F;x.direction=ar.test(o[1])?'rtl':'ltr';x.textAlign='center';x.fillText(o[1],W/2,m)}
+else{x.font=(o[4]?'700 ':'400 ')+o[3]+'px '+F;x.direction='ltr';let t=o[1];while(x.measureText(t).width>W-2*P-90&&t.length>3)t=t.slice(0,-2);if(t!=o[1])t+='…';x.textAlign='left';x.fillText(t,P,m);x.textAlign='right';x.fillText(o[2],W-P,m)}});
+return c}
+function mkPDF(j,w,h){const en=new TextEncoder(),parts=[],offs=[];let len=0;const add=v=>{const b=typeof v=='string'?en.encode(v):v;parts.push(b);len+=b.length};
+const pw=226,ph=Math.round(226*h/w*100)/100,cs=`q ${pw} 0 0 ${ph} 0 0 cm /I Do Q`;
+add('%PDF-1.4\n');offs[1]=len;add('1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n');offs[2]=len;add('2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n');
+offs[3]=len;add(`3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${pw} ${ph}]/Resources<</XObject<</I 5 0 R>>>>/Contents 4 0 R>>endobj\n`);
+offs[4]=len;add(`4 0 obj<</Length ${cs.length}>>stream\n${cs}\nendstream endobj\n`);
+offs[5]=len;add(`5 0 obj<</Type/XObject/Subtype/Image/Width ${w}/Height ${h}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${j.length}>>stream\n`);add(j);add('\nendstream endobj\n');
+const xo=len;add('xref\n0 6\n0000000000 65535 f \n'+[1,2,3,4,5].map(i=>String(offs[i]).padStart(10,'0')+' 00000 n \n').join('')+`trailer<</Size 6/Root 1 0 R>>\nstartxref\n${xo}\n%%EOF`);
+const out=new Uint8Array(len);let o=0;parts.forEach(b=>{out.set(b,o);o+=b.length});return out}
+async function savePDF(s){const st=$('#pm');try{const c=rcCanvas(s),b=atob(c.toDataURL('image/jpeg',.92).split(',')[1]),j=new Uint8Array(b.length);for(let i=0;i<b.length;i++)j[i]=b.charCodeAt(i);const r=mkPDF(j,c.width,c.height),blob=r instanceof Blob?r:new Blob([r],{type:'application/pdf'}),fn='invoice-'+(s.id%100000)+'.pdf';
+try{const f=new File([blob],fn,{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});st.textContent='تم';return}}catch(e){if(e&&e.name=='AbortError')return}
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();a.remove();st.textContent='تم الحفظ'}catch(e){st.textContent='تعذّر الحفظ'}}
+const loadJs=u=>new Promise((r,j)=>{const s=document.createElement('script');s.src=u;s.onload=r;s.onerror=j;document.head.appendChild(s)});
+async function initFB(){let c;try{c=JSON.parse(localStorage.getItem('fbcfg')||'null')}catch(e){}if(!c)return null;const B='https://www.gstatic.com/firebasejs/10.12.2/firebase-';await loadJs(B+'app-compat.js');await loadJs(B+'firestore-compat.js');firebase.initializeApp(c);return firebase.firestore()}
+const staffList=()=>S.staff.split('\n').map(l=>l.trim().split(':')).filter(a=>a.length>=3).map(a=>({name:a[0],pin:a[1].trim(),role:a[2].trim()}));
+function vLogin(){return`<div class="box" style="max-width:320px;margin:40px auto;text-align:center"><b>تسجيل الدخول</b><p class="mut">اكتب الرقم السري (PIN)</p><input id="pin" type="password" inputmode="numeric" autocomplete="off" style="text-align:center;font-size:22px;letter-spacing:6px">${ui.err?'<p style="color:var(--bad)">الرقم غير صحيح</p>':''}<div class="btns"><button class="btn" data-act="login">دخول</button></div></div>`}
+document.addEventListener('input',e=>{if(e.target.id=='qs'){ui.q=e.target.value;render();const x=$('#qs');x.focus();x.setSelectionRange(x.value.length,x.value.length)}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='pin')document.querySelector('[data-act=login]').click()});
+const stArr=()=>S.staff.split('\n').filter(l=>l.trim()).map(l=>{const a=l.split(':');return[a[0]||'',a[1]||'',a[2]||'cashier']});
+const toText=M=>M.map(c=>c.name+'\n'+c.dishes.map(d=>d.name+' '+d.price+'\n'+d.extras.map(e=>'+ '+e.name+' '+e.price+'\n').join('')).join('')).join('');
+document.addEventListener('change',e=>{const t=e.target,a=t.dataset.act,v=t.value,k=t.dataset.k;
+if(a=='gen'){S.set[t.dataset.f]=t.type=='number'?Math.max(0,+v||0):v}
+else if(a=='mn'){const c=MENU[+t.dataset.c];if(k=='cn')c.name=v.replace(/\s*\d+$/,'').trim()||c.name;else{const d=c.dishes[+t.dataset.d];if(k=='dn')d.name=v.trim()||d.name;else d.price=Math.max(0,+v||0)}S.menuText=toText(MENU)}
+else if(a=='st'){const s=stArr();s[+t.dataset.i][+t.dataset.f]=v.replace(/:/g,'').trim();S.staff=s.map(x=>x.join(':')).join('\n')}
+else return;save();render()});
+if(!staffList().length)ui.user={name:'',role:'admin'};
+const rr=()=>{if(!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()};
+(async()=>{try{DB=await initFB()}catch(e){DB=null}
+if(!DB)return;
+DB.doc('pos/live').onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const j=s.exists&&s.data().j;if(j){if(j!=lastL){lastL=j;const o=JSON.parse(j);S.tables=o.tables;S.orders=o.orders;S.pays=o.pays||{};S.meta=o.meta||{};S.seq=o.seq;rr()}}else DB.doc('pos/live').set({j:lastL=live()}).catch(()=>{})},()=>{});
+DB.doc('pos/config').onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const j=s.exists&&s.data().j;if(j){if(j!=lastC){lastC=j;const o=JSON.parse(j);S.menuText=o.menuText;S.set=o.set;S.staff=o.staff;MENU=parse(S.menuText);if(ui.cat>=MENU.length)ui.cat=0;rr()}}else DB.doc('pos/config').set({j:lastC=conf()}).catch(()=>{})},()=>{});
+DB.collection('sales').orderBy('time','desc').limit(1500).onSnapshot(q=>{S.sales=q.docs.map(d=>JSON.parse(d.data().j));rr()},()=>{})})();
+render();
+</script>
+</body>
+</html>
