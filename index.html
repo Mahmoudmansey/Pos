@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <title>نقطة بيع المطعم</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap">
 <style>
@@ -65,7 +68,7 @@ main{padding-bottom:96px}
 </style>
 </head>
 <body>
-<div class="top"><h1 id="ttl">🍽️ نقطة بيع المطعم</h1><span><button data-act="fbopen" style="border:0;background:none;font-size:18px;cursor:pointer">☁</button><span class="mut" id="clock"></span></span></div>
+<div class="top"><h1 id="ttl">🍽️ نقطة بيع المطعم</h1><span class="mut" id="clock"></span></div>
 <nav id="nav"></nav>
 <main id="app"></main>
 <div id="md"></div>
@@ -308,7 +311,7 @@ try{const r=localStorage.getItem('pos-v1');if(r){const o=JSON.parse(r);if(o.ver!
 let DB=null,lastL='',lastC='',tm;
 const live=()=>JSON.stringify({tables:S.tables,orders:S.orders.filter(o=>o.status!='served').slice(-60),pays:S.pays,meta:S.meta,seq:S.seq});
 const conf=()=>JSON.stringify({menuText:S.menuText,set:S.set,staff:S.staff});
-function save(){try{localStorage.setItem('pos-v1',JSON.stringify(S))}catch(e){}if(!DB)return;clearTimeout(tm);tm=setTimeout(()=>{const l=live(),c=conf();if(l!=lastL){lastL=l;DB.doc('pos/live').set({j:l}).catch(()=>{})}if(c!=lastC){lastC=c;DB.doc('pos/config').set({j:c}).catch(()=>{})}},250)}
+function save(){try{localStorage.setItem('pos-v1',JSON.stringify(S))}catch(e){}if(!DB)return;clearTimeout(tm);tm=setTimeout(()=>{const l=live(),c=conf();if(l!=lastL){lastL=l;DB.doc('pos/live').set({j:l}).then(()=>{SY.w++;SY.err=''}).catch(sErr)}if(c!=lastC){lastC=c;DB.doc('pos/config').set({j:c}).then(()=>{SY.w++;SY.err=''}).catch(sErr)}},250)}
 let ui={tab:'order',table:'',cat:0,view:'home',ocat:1,md:null,rst:false};
 const TBL=()=>[...Array(+S.set.tables||12)].map((_,i)=>String(i+1)).concat('سفري');
 const NUM=/^(.*?)\s+(\d+(?:\.\d+)?)$/;
@@ -367,7 +370,6 @@ return`<div class="chips">${tabs}</div>${b}`}
 function vModal(){const m=ui.md;
 if(m.t=='rc'){const s=m.s;return`<div class="md"><div id="rc" style="direction:ltr"><b>${esc(S.set.name||'Receipt')} #${s.id%100000}</b><div class="mut">${new Date(s.time).toLocaleString('en-GB')} · ${esc(s.table)}${s.room?' · Room '+esc(s.room):''}</div>${s.items.map(i=>`<div class="row"><span>${i.qty} × ${esc(i.name)}</span><span>${$$(i.price*i.qty)}</span></div>`).join('')}<div class="tot g"><span>Total</span><span>${$$(s.total)}</span></div>${(s.pays||[{method:s.method,amount:s.total}]).map(x=>`<div class="tot"><span>${x.method=='room'?'Room '+esc(x.room||''):x.method}</span><span>${$$(x.amount)}</span></div>`).join('')}<div class="mut">${esc(S.set.foot||'')}</div><div id="pm" class="mut note" style="text-align:center"></div><div class="btns"><button class="btn" data-act="pdf">حفظ PDF</button><button class="btn s" data-act="prt">طباعة</button><button class="btn s" data-act="close">إغلاق</button></div></div></div>`}
 if(m.t=='it'){const l=cart();return`<div class="md"><div><b style="direction:ltr;display:block">${esc(m.n)}</b>${l.map((i,k)=>(i.name==m.n||i.name.startsWith(m.n+' + '))?`<div class="row"><div class="nm"><div>${esc(i.name)} ${i.sent?'<span class="tag">✓</span>':''}</div>${i.sent?'':`<input class="note" data-act="note" data-k="${k}" placeholder="ملاحظة" value="${esc(i.note)}">`}</div><div class="q">${i.sent?'':`<button data-act="dec" data-k="${k}">−</button>`}<b>${i.qty}</b>${i.sent?'':`<button data-act="inc" data-k="${k}">+</button>`}</div></div>`:'').join('')}<div class="btns"><button class="btn" data-act="close">تم</button></div></div></div>`}
-if(m.t=='fb'){return`<div class="md"><div><b>المزامنة بين الأجهزة (Firebase)</b><p class="mut" style="margin:6px 0">${DB?'متصل ✓':'غير متصل: وضع الجهاز الواحد'}</p><textarea id="fbc" rows="7" style="direction:ltr" placeholder="الصق هنا firebaseConfig من Firebase">${esc(localStorage.getItem('fbcfg')||'')}</textarea><div class="btns"><button class="btn" data-act="fbsave">حفظ وإعادة تحميل</button><button class="btn s" data-act="fbclr">فصل</button></div><div class="btns"><button class="btn s" data-act="close">إغلاق</button></div></div></div>`}
 if(m.t=='om'){const mm=S.meta[m.id]||{};return`<div class="md"><div style="padding:0;overflow:hidden"><div style="background:var(--pri);color:var(--on);padding:14px;text-align:center;font-weight:800">${esc(lab(m.id))}</div>${(mm.void?[['ohide','إخفاء']]:[['ocancel',ui.cf?'تأكيد الإلغاء':'إلغاء الطلب'],['ohide','إخفاء'],['ptot','طباعة الإجمالي'],['opay','الدفع'],['rename','تسمية الطلب']]).map(x=>`<button class="btn s" style="width:100%;border-radius:0;border-width:0 0 1px;padding:14px" data-act="${x[0]}">${x[1]}</button>`).join('')}<button class="btn s" style="width:100%;border:0;padding:14px" data-act="close">إغلاق</button></div></div>`}
 if(m.t=='lb'){return`<div class="md"><div><b>تسمية الطلب</b><input id="lb" value="${esc((S.meta[m.id]||{}).label||'')}" placeholder="طاولة 5 / سفري / غرفة 214" style="margin:8px 0"><div class="chips">${['طاولة ','سفري','غرفة '].map(x=>`<button class="chip" data-act="lpre" data-v="${x}">${x.trim()}</button>`).join('')}</div><div class="btns"><button class="btn" data-act="lbsave">حفظ</button><button class="btn d" data-act="odel">${ui.cf?'تأكيد الحذف':'حذف الطلب'}</button></div><div class="btns"><button class="btn s" data-act="close">إغلاق</button></div></div></div>`}
 if(m.t=='ex'){return`<div class="md"><div><b style="direction:ltr;display:block">${esc(m.d.name)}</b>${m.d.extras.map((e,i)=>`<label class="x ${m.s.includes(i)?'on':''}" data-act="xt" data-v="${i}"><span>${esc(e.name)}</span><b>+${$$(e.price)}</b></label>`).join('')}<div class="btns"><button class="btn" data-act="exok">إضافة للطلب</button><button class="btn s" data-act="close">إلغاء</button></div></div></div>`}
@@ -390,9 +392,6 @@ else if(a=='ocat'){ui.ocat=+v;ui.q=''}
 else if(a=='msearch'){ui.sq=!ui.sq;if(!ui.sq)ui.q=''}
 else if(a=='dopt'){ui.md={t:'it',n:v}}
 else if(a=='omenu'){ui.md={t:'om',id:v};ui.cf=0}
-else if(a=='fbopen'){ui.md={t:'fb'}}
-else if(a=='fbsave'){try{const t=$('#fbc').value,o=new Function('return '+t.slice(t.indexOf('{'),t.lastIndexOf('}')+1))();if(!o.projectId)throw 0;localStorage.setItem('fbcfg',JSON.stringify(o));location.reload();return}catch(x){alert('الإعدادات غير صحيحة')}}
-else if(a=='fbclr'){localStorage.removeItem('fbcfg');location.reload();return}
 else if(a=='rename'){ui.md={t:'lb',id:ui.md.id}}
 else if(a=='ocancel'){if(!ui.cf){ui.cf=1}else{const id=ui.md.id;if(!S.tables[id].length){delete S.tables[id];delete S.meta[id]}else{S.meta[id].void=1;S.orders.forEach(o=>{if(o.oid==id&&o.status!='served')o.status='served'});delete S.pays[id]}ui.md=null;ui.cf=0;save()}}
 else if(a=='ohide'){S.meta[ui.md.id].hide=1;ui.md=null;save()}
@@ -428,7 +427,7 @@ else if(a=='delst'){const s=stArr();s.splice(+el.dataset.i,1);S.staff=s.map(x=>x
 else if(a=='restore'){try{const o=JSON.parse($('#bk').value);if(o.menuText){S.menuText=o.menuText;MENU=parse(S.menuText)}if(o.set)S.set=o.set;if(o.staff!=null)S.staff=o.staff;save()}catch(x){}}
 render()});
 document.addEventListener('change',e=>{if(e.target.dataset.act=='note'){cart()[+e.target.dataset.k].note=e.target.value;save()}});
-setInterval(()=>{$('#clock').textContent=new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})},1000);
+setInterval(()=>{$('#clock').textContent=(DB?(SY.err?'🔴 '+SY.err+' ':'🟢 ')+'w'+SY.w+' r'+SY.r+' ':'⚪ ')+new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})},1000);
 function rcCanvas(s){const W=420,P=24,ops=[],ar=/[\u0600-\u06FF]/,F='Cairo,Tahoma,Arial,sans-serif',pays=s.pays||[{method:s.method,amount:s.total}];
 ops.push(['c',S.set.name||'Receipt',22,1],['c','#'+(s.id%100000)+'  '+new Date(s.time).toLocaleString('en-GB'),13,0],['c',s.table+(s.room?' · Room '+s.room:''),16,1],['h']);
 s.items.forEach(i=>ops.push(['lr',i.qty+' × '+i.name,$$(i.price*i.qty),15,0]));
@@ -450,11 +449,14 @@ offs[4]=len;add(`4 0 obj<</Length ${cs.length}>>stream\n${cs}\nendstream endobj\
 offs[5]=len;add(`5 0 obj<</Type/XObject/Subtype/Image/Width ${w}/Height ${h}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${j.length}>>stream\n`);add(j);add('\nendstream endobj\n');
 const xo=len;add('xref\n0 6\n0000000000 65535 f \n'+[1,2,3,4,5].map(i=>String(offs[i]).padStart(10,'0')+' 00000 n \n').join('')+`trailer<</Size 6/Root 1 0 R>>\nstartxref\n${xo}\n%%EOF`);
 const out=new Uint8Array(len);let o=0;parts.forEach(b=>{out.set(b,o);o+=b.length});return out}
-async function savePDF(s){const st=$('#pm');try{const c=rcCanvas(s),b=atob(c.toDataURL('image/jpeg',.92).split(',')[1]),j=new Uint8Array(b.length);for(let i=0;i<b.length;i++)j[i]=b.charCodeAt(i);const r=mkPDF(j,c.width,c.height),blob=r instanceof Blob?r:new Blob([r],{type:'application/pdf'}),fn='invoice-'+(s.id%100000)+'.pdf';
-try{const f=new File([blob],fn,{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});st.textContent='تم';return}}catch(e){if(e&&e.name=='AbortError')return}
-const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();a.remove();st.textContent='تم الحفظ'}catch(e){st.textContent='تعذّر الحفظ'}}
-const loadJs=u=>new Promise((r,j)=>{const s=document.createElement('script');s.src=u;s.onload=r;s.onerror=j;document.head.appendChild(s)});
-async function initFB(){let c;try{c=JSON.parse(localStorage.getItem('fbcfg')||'null')}catch(e){}if(!c)return null;const B='https://www.gstatic.com/firebasejs/10.12.2/firebase-';await loadJs(B+'app-compat.js');await loadJs(B+'firestore-compat.js');firebase.initializeApp(c);return firebase.firestore()}
+const SY={err:'',w:0,r:0};
+const sErr=e=>{SY.err=(e&&e.code)||'error';toast('مشكلة في المزامنة ('+SY.err+')')};
+const toast=t=>{let e=document.getElementById('ts');if(!e){e=document.createElement('div');e.id='ts';e.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:10px;z-index:50;max-width:90%;text-align:center';document.body.appendChild(e)}e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',6000)};
+const DL={save:async o=>{const a=document.createElement('a');const bl=o.data instanceof Blob?o.data:new Blob([o.data],{type:'application/pdf'});a.href=URL.createObjectURL(bl);a.download=o.filename;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(a.href)},1000)}};
+function initDB(){try{const c=window.FIREBASE_CONFIG;if(!c||!c.projectId||!window.firebase)return null;firebase.initializeApp(c);const f=firebase.firestore();try{f.enablePersistence({synchronizeTabs:true}).catch(()=>{})}catch(e){}const bad=e=>{SY.err=(e&&e.code)||'error';try{toast('مشكلة في المزامنة ('+SY.err+'): '+({'permission-denied':'قواعد Firestore تمنع الوصول','unavailable':'لا يوجد اتصال أو القاعدة غير مفعلة','not-found':'قاعدة Firestore غير منشأة'}[SY.err]||'راجع إعدادات Firebase'))}catch(x){}};f.doc('pos/ping').set({t:Date.now()}).then(()=>{SY.err=''}).catch(bad);f.doc('pos/ping').onSnapshot(()=>{},bad);return f}catch(e){return null}}
+async function savePDF(s){const st=$('#pm');try{const c=rcCanvas(s),b=atob(c.toDataURL('image/jpeg',.92).split(',')[1]),j=new Uint8Array(b.length);for(let i=0;i<b.length;i++)j[i]=b.charCodeAt(i);
+const d=DL;if(!d){st.textContent='الحفظ غير متاح هنا. استخدم الطباعة ثم اختر «حفظ كـ PDF».';return}
+await d.save({filename:'invoice-'+(s.id%100000)+'.pdf',data:mkPDF(j,c.width,c.height)});st.textContent='تم'}catch(e){st.textContent=e&&e.code=='declined'?'تم الإلغاء':'تعذّر الحفظ'}}
 const staffList=()=>S.staff.split('\n').map(l=>l.trim().split(':')).filter(a=>a.length>=3).map(a=>({name:a[0],pin:a[1].trim(),role:a[2].trim()}));
 function vLogin(){return`<div class="box" style="max-width:320px;margin:40px auto;text-align:center"><b>تسجيل الدخول</b><p class="mut">اكتب الرقم السري (PIN)</p><input id="pin" type="password" inputmode="numeric" autocomplete="off" style="text-align:center;font-size:22px;letter-spacing:6px">${ui.err?'<p style="color:var(--bad)">الرقم غير صحيح</p>':''}<div class="btns"><button class="btn" data-act="login">دخول</button></div></div>`}
 document.addEventListener('input',e=>{if(e.target.id=='qs'){ui.q=e.target.value;render();const x=$('#qs');x.focus();x.setSelectionRange(x.value.length,x.value.length)}});
@@ -468,11 +470,11 @@ else if(a=='st'){const s=stArr();s[+t.dataset.i][+t.dataset.f]=v.replace(/:/g,''
 else return;save();render()});
 if(!staffList().length)ui.user={name:'',role:'admin'};
 const rr=()=>{if(!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()};
-(async()=>{try{DB=await initFB()}catch(e){DB=null}
+(async()=>{DB=initDB();
 if(!DB)return;
-DB.doc('pos/live').onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const j=s.exists&&s.data().j;if(j){if(j!=lastL){lastL=j;const o=JSON.parse(j);S.tables=o.tables;S.orders=o.orders;S.pays=o.pays||{};S.meta=o.meta||{};S.seq=o.seq;rr()}}else DB.doc('pos/live').set({j:lastL=live()}).catch(()=>{})},()=>{});
-DB.doc('pos/config').onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const j=s.exists&&s.data().j;if(j){if(j!=lastC){lastC=j;const o=JSON.parse(j);S.menuText=o.menuText;S.set=o.set;S.staff=o.staff;MENU=parse(S.menuText);if(ui.cat>=MENU.length)ui.cat=0;rr()}}else DB.doc('pos/config').set({j:lastC=conf()}).catch(()=>{})},()=>{});
-DB.collection('sales').orderBy('time','desc').limit(1500).onSnapshot(q=>{S.sales=q.docs.map(d=>JSON.parse(d.data().j));rr()},()=>{})})();
+DB.doc('pos/live').onSnapshot(s=>{if(s.metadata.hasPendingWrites||(s.metadata.fromCache&&!s.exists))return;const j=s.exists&&s.data().j;if(j){if(j!=lastL){lastL=j;SY.r++;const o=JSON.parse(j);S.tables=o.tables;S.orders=o.orders;S.pays=o.pays||{};S.meta=o.meta||{};S.seq=o.seq;rr()}}else DB.doc('pos/live').set({j:lastL=live()}).catch(sErr)},sErr);
+DB.doc('pos/config').onSnapshot(s=>{if(s.metadata.hasPendingWrites||(s.metadata.fromCache&&!s.exists))return;const j=s.exists&&s.data().j;if(j){if(j!=lastC){lastC=j;SY.r++;const o=JSON.parse(j);S.menuText=o.menuText;S.set=o.set;S.staff=o.staff;MENU=parse(S.menuText);if(ui.cat>=MENU.length)ui.cat=0;rr()}}else DB.doc('pos/config').set({j:lastC=conf()}).catch(sErr)},sErr);
+DB.collection('sales').orderBy('time','desc').limit(1500).onSnapshot(q=>{S.sales=q.docs.map(d=>JSON.parse(d.data().j));rr()},sErr)})();
 render();
 </script>
 </body>
